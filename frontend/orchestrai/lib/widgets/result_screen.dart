@@ -16,7 +16,7 @@ class ResultScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('협업 실행 결과'),
+        title: Text('협업 실행 결과', style: TextStyle(color: Colors.white)),
         backgroundColor: Color(0xFF6050DC),
       ),
       body: Padding(
