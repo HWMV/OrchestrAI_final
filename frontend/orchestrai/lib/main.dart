@@ -15,7 +15,41 @@ void main() {
   );
 }
 
-class OrchestrAIApp extends StatelessWidget {
+class OrchestrAIApp extends StatefulWidget {
+  @override
+  _OrchestrAIAppState createState() => _OrchestrAIAppState();
+}
+
+class _OrchestrAIAppState extends State<OrchestrAIApp> {
+  bool _showedPopup = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showPopupOnce();
+    });
+  }
+
+  void _showPopupOnce() {
+    if (!_showedPopup) {
+      setState(() {
+        _showedPopup = true;
+      });
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AITeamPopup(
+            onCreateTeam: () {
+              Navigator.of(context).pop();
+            },
+          );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,44 +58,7 @@ class OrchestrAIApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: AITeamPopupOverlay(),
-    );
-  }
-}
-
-class AITeamPopupOverlay extends StatefulWidget {
-  @override
-  _AITeamPopupOverlayState createState() => _AITeamPopupOverlayState();
-}
-
-class _AITeamPopupOverlayState extends State<AITeamPopupOverlay> {
-  bool _showPopup = true;
-
-  void _navigateToCrewScreen() {
-    setState(() {
-      _showPopup = false;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<CrewModel>(
-      builder: (context, crewModel, child) {
-        if (_showPopup) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (BuildContext context) {
-                return AITeamPopup(
-                  onCreateTeam: _navigateToCrewScreen,
-                );
-              },
-            );
-          });
-        }
-        return CrewScreen();
-      },
+      home: CrewScreen(),
     );
   }
 }
