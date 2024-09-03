@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
 import '../models/crew_model.dart';
+import '../services/api_service.dart';
+import 'result_screen.dart';
 
 class AgentDependencyPopup extends StatefulWidget {
   final List<AgentModel> agents;
-  final Function(List<AgentModel>) onDependenciesSet;
+  final String userInput;
 
   const AgentDependencyPopup({
     Key? key,
     required this.agents,
-    required this.onDependenciesSet,
+    required this.userInput,
   }) : super(key: key);
 
   @override
@@ -22,6 +26,43 @@ class _AgentDependencyPopupState extends State<AgentDependencyPopup> {
   void initState() {
     super.initState();
     _orderedAgents = List.from(widget.agents);
+  }
+
+  Future<void> _executeCrew() async {
+    try {
+      final apiService = ApiService();
+      final crewData = {
+        "agents": _orderedAgents
+            .map((agent) => {
+                  "agent_name": agent.name,
+                  "user_input": widget.userInput,
+                  "depends_on": _orderedAgents.indexOf(agent) > 0
+                      ? [_orderedAgents[_orderedAgents.indexOf(agent) - 1].name]
+                      : []
+                })
+            .toList(),
+        "user_input": widget.userInput
+      };
+
+      final result = await apiService.executeCrew(crewData);
+
+      if (result.containsKey('result')) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => ResultScreen(
+              result: result['result'],
+            ),
+          ),
+        );
+      } else {
+        throw Exception('Invalid response format');
+      }
+    } catch (e) {
+      print('Error executing crew: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error occurred while executing crew: $e')),
+      );
+    }
   }
 
   @override
@@ -57,11 +98,8 @@ class _AgentDependencyPopupState extends State<AgentDependencyPopup> {
           },
         ),
         TextButton(
-          child: Text('확인'),
-          onPressed: () {
-            widget.onDependenciesSet(_orderedAgents);
-            Navigator.of(context).pop();
-          },
+          child: Text('협업 실행'),
+          onPressed: _executeCrew,
         ),
       ],
     );

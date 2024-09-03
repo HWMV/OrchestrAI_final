@@ -4,6 +4,8 @@ import 'models/crew_model.dart';
 import 'screens/crew_screen.dart';
 import 'widgets/ai_team_popup.dart';
 
+//projectId: "orchestrai-a81a7",
+//HOSTING URL : https://orchestrai-a81a7.web.app
 void main() {
   runApp(
     ChangeNotifierProvider(
