@@ -16,10 +16,10 @@ class _CrewScreenState extends State<CrewScreen> {
   bool _hasShownPopup = false;
 
   final List<Offset> chairPositions = [
-    Offset(0.35, 0.34),
-    Offset(0.35, 0.53),
-    Offset(0.62, 0.34),
-    Offset(0.62, 0.53),
+    Offset(0.30, 0.30),
+    Offset(0.30, 0.49),
+    Offset(0.57, 0.30),
+    Offset(0.57, 0.49),
   ];
 
   @override
@@ -109,7 +109,7 @@ class _CrewScreenState extends State<CrewScreen> {
                         child: Text(
                           crewModel.teamName!,
                           style: TextStyle(
-                              color: Colors.black87,
+                              color: Colors.white,  // 여기를 변경했습니다
                               fontSize: 18,
                               fontWeight: FontWeight.bold),
                         ),
@@ -133,43 +133,35 @@ class _CrewScreenState extends State<CrewScreen> {
                           setState(() {});
                         });
                       },
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            width: 160, // 영역 크기를 더 키움
-                            height: 160,
-                            decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          if (crewModel.selectedAgents[index] == null)
-                            Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.7),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.add,
-                                color: Colors.black87,
-                                size: 24,
-                              ),
-                            )
-                          else
-                            Positioned(
-                              top: -40, // 이미지를 더 위로 올림
-                              left: -40,
-                              right: -40,
-                              bottom: -40,
-                              child: Container(
-                                width: 40, // 이미지 크기를 줄임
-                                height: 40,
+                      child: Container(
+                        width: 160,
+                        height: 160,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          shape: BoxShape.circle,
+                        ),
+                        child: crewModel.selectedAgents[index] == null
+                            ? Center(
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.withOpacity(0.7),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.add,
+                                    color: Colors.black87,
+                                    size: 24,
+                                  ),
+                                ),
+                              )
+                            : ClipOval(
                                 child: Image.asset(
                                   'assets/${crewModel.selectedAgents[index]!.name.replaceAll(' ', '_').toLowerCase()}.png',
                                   fit: BoxFit.contain,
+                                  width: 160,
+                                  height: 160,
                                   errorBuilder: (BuildContext context,
                                       Object exception,
                                       StackTrace? stackTrace) {
@@ -180,14 +172,13 @@ class _CrewScreenState extends State<CrewScreen> {
                                         style: TextStyle(
                                           color: Colors.black87,
                                           fontWeight: FontWeight.bold,
+                                          fontSize: 40,
                                         ),
                                       ),
                                     );
                                   },
                                 ),
                               ),
-                            ),
-                        ],
                       ),
                     ),
                   );
